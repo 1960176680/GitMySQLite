@@ -1,0 +1,93 @@
+函数
+日期函数
+select datetime('now');
+select time('now');
+Select date(‘now’);
+-------------------------------------
+算术函数
+Select max(expr1,expr2,....) from employees;
+Select min(expr1,expr2,....) from employees;
+select round(salary) from employees;
+select round(salary,1) from employees;--四舍五入到小数点后1位
+-------------------------------------
+字符处理函数
+length(X) 返回给定字符串表达式的字符个数。select length(last_name) from employees;
+lower(X) 将大写字符数据转换为小写字符数据后返回字符表达式。 select lower(last_name) from employees;
+upper(X) 返回将小写字符数据转换为大写的字符表达式。 select upper(last_name) from employees;
+substr(X,Y,Z) 返回X的子串。 select substr(last_name,1,3) from employees;--第二个参数是偏移量,从1开始;第三个参数是长度.
+-------------------------------------
+集合函数 (组函数)
+avg(X) 返回组中值的平均值。
+count(X) 返回组中项目的数量。 select count(department_id) from employees where department_id=1;
+max(X) 返回组中值的最大值。 select max(salary) from employees;
+min(X) 返回组中值的最小值。
+sum(X) 返回表达式中所有值的和。
+-------------------------------------
+GROUP BY子句
+语法格式:
+SELECT	column, group_function
+FROM		<表名>
+[WHERE 	condition]
+[GROUP BY	group_by_expression]
+[ORDER BY	column];
+使用GROUP BY子句将表分成小组
+select avg(salary) from employees group by department_id;
+出现在SELECT列表中的字段，如果出现的位置不是在组函数中，那么必须出现在GROUP BY子句中
+SELECT   department_id, AVG(salary)
+FROM     employees
+GROUP BY department_id;
+在SELECT中一旦出现了非组函数的列,则应该(而非必须,这是sqlite数据库与其他数据库的不同)在GROUP BY子句中按其分组,如果在SELECT中并没有出现非组函数(只有组函数),也可以GROUP BY一个字段
+
+对多列进行分组
+SELECT dept_id,job_id,SUM(salary)
+FROM emp
+GROUP BY dept_no,  job_id
+ORDER BY dept_no ;
+
+不能在 WHERE 子句中对组函数进行限制.
+对组函数进行限制必须使用 HAVING 子句.
+
+SELECT   department_id, AVG(salary)
+FROM     employees
+WHERE    AVG(salary) > 8000  --错误--错误--错误--错误--错误--错误
+GROUP BY department_id;
+WHERE在查询之前判断,判断之后组函数才开始运算,WHERE就不能限制组函数了.
+举例:
+查询每个部门的最高工资,当其大于10000时才查询出来.
+SELECT DEPARTMENT_ID ,MAX(SALARY)
+FROM EMPLOYEES
+GROUP BY DEPARTMENT_ID
+HAVING MAX(SALARY)>10000;
+查询语句的完整语法格式:
+SELECT	column, group_function
+FROM		<表名>
+[WHERE	 condition]
+[GROUP BY	group_by_expression]
+[HAVING	group_condition]
+[ORDER BY	column];
+-------------------------------------
+多表连接查询
+多表连接查询实际上是通过各个表之间共同的列的关联性进行查询数据。
+1.内连接
+ 根据表中的共同的列进行匹配，尤其是两个表具有主外键关系时适合使用。
+  内连接的结果是从两个或者是两个以上的表的组合中挑选出符合连接条件的数据。如果不能满足连接条件则舍弃，参与连接的表的地位是平等的。
+ select  person.name,Stu.CouseID,Stu.score
+from person,Stu
+where person._id=Stu.CouseID;
+或者是:
+  select person.name,Stu.CouseID,Stu.score
+from person inner join Stu
+on person._id=Stu.CouseID;
+2.外连接
+  外连接中参与连接的表有主从之分，以主表的每行数据去匹配从表的数据列，符合连接条件的数据将直接返回到结果集中，针对不符合连接条件的列，将被填null后再返回到结果集中。
+左外联:
+select person.name,Stu.CouseID,Stu.score
+from person left outer join Stu
+on person._id=Stu.CouseID;
+右外联:
+select person.name,Stu.CouseID,Stu.score
+from person left outer join Stu
+on person._id=Stu.CouseID;
+
+3.交叉连接
+  交叉连接是返回左表中的所有行，左表中的每一行与右表中所有行再一一组合，相当于两个表相乘。

@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         String sql="insert into "+ConstantDB.TABLE_NAME_LEAVE_DELIVERY+"(leaveDeliveryCode,leaveDeliveryPerson,leaveDeliveryPersonNum,leaveDeliveryReason,status) values(\"646446545779\",\"周文广18348088072\",\"21996.3335\",\"1\",0)";
         db.execSQL(sql);
         List list = new DBManager().queryData(db,queryAllSQL,null);
+        SQLiteDatabase.openOrCreateDatabase("/mnt/db/temp.db3",null)
+                .execSQL("insert into tb values(null,?,?)",new String[]{title,content});
 
     }
 }
